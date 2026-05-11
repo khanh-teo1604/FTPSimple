@@ -1,16 +1,31 @@
-public class App {
+import java.io.IOException;
+
+import Controller.ConnectController;
+import FTP.FTPClient;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.*;
+import javafx.stage.Stage;
+
+public class App extends Application {
     public static void main(String[] args) throws Exception {
-        FTPClient ftp = new FTPClient();
-        ftp.connect("localhost", 21);
-        // for filezilla
-        ftp.login("test1", "khanhteo1604");
-        ftp.pwd();
-        ftp.cd("/test1");
-        ftp.ls();
-        ftp.put("localReadme", "firstFile");
-        ftp.ls();
-        ftp.mkdir("test2");
-        ftp.rmdir("test2");
-        ftp.disconnect();
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws IOException {
+        FTPClient ftpClient = new FTPClient();
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXMLFile/Connection.fxml"));
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+
+        ConnectController connectController = loader.getController();
+        connectController.setFTPClient(ftpClient);
+
+        // controller.setMainWindow(primaryStage);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
     }
 }

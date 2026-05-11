@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="641.0" prefWidth="807.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.MainController">
+   <bottom>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <ListView fx:id="replyFromServerView" prefHeight="258.0" prefWidth="807.0" VBox.vgrow="ALWAYS" />
+            <TextField fx:id="command" onAction="#runCommand" promptText="Write a Command" />
+         </children>
+      </VBox>
+   </bottom>
+   <left>
+      <VBox>
+         <children>
+            <Label alignment="CENTER" prefHeight="46.0" prefWidth="304.0" text="Local File" textAlignment="RIGHT">
+               <font>
+                  <Font name="Aptos Narrow" size="31.0" />
+               </font>
+            </Label>
+            <ListView fx:id="clientListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#changeLocalDirectory" prefHeight="319.0" prefWidth="328.0" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <VBox alignment="CENTER" prefHeight="428.0" prefWidth="373.0" spacing="20.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#goBackLocal" text="Back in Local" />
+            <Button mnemonicParsing="false" onAction="#goBackServer" text="Back in Server">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#showPWD" prefHeight="35.0" text="pwd">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#downloadAFile" text="Download">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#uploadAFile" text="Upload">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#deleteAFile" text="Delete">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#quit" text="Quit">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+      </VBox>
+   </center>
+   <right>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" prefHeight="42.0" prefWidth="342.0" text="Server File" textAlignment="RIGHT">
+               <font>
+                  <Font name="Aptos Narrow" size="31.0" />
+               </font>
+            </Label>
+            <ListView fx:id="serverListView" onMouseClicked="#changeServerDirectory" prefHeight="318.0" prefWidth="221.0" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </right>
+</BorderPane>
