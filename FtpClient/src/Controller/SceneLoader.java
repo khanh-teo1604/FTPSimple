@@ -1,7 +1,5 @@
 package Controller;
 
-import javax.swing.Action;
-
 import FTP.FTPClient;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;

@@ -1,23 +1,17 @@
 package FTP;
 
-import static FTP.Constant.LIST_COMMAND;
 import static FTP.Constant.LOGIN_UNSUCCESSFUL;
 import static FTP.Constant.PASSIVE_MODE;
 import static FTP.Constant.PERMISSION_DENIED;
-import static FTP.Constant.REQUIRE_PASSWORD;
-import static FTP.Constant.TRANSMISSION_SUCCESSFUL;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 

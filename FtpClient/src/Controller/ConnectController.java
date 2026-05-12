@@ -7,8 +7,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import static FTP.Constant.CONNECT_SUCCESSFUL;
-import static FTP.Constant.FTP_SERVER;
-import static FTP.Constant.PORT;
 
 public class ConnectController extends AbstractController {
 
@@ -25,8 +23,8 @@ public class ConnectController extends AbstractController {
     void connect(ActionEvent event) throws Throwable {
         try {
             int portNumber = Integer.parseInt(port.getText());
-            // ftp.connect(server.getText(), portNumber);
-            ftp.connect(FTP_SERVER, PORT);
+            ftp.connect(server.getText(), portNumber);
+            // ftp.connect(FTP_SERVER, PORT);
             ftp.initializeStreams();
             SceneLoader sceneLoader = new SceneLoader(ftp);
             printArrayString(ftp.readReplyWithSpecificCode(CONNECT_SUCCESSFUL));

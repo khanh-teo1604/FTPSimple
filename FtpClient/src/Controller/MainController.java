@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import FTP.FTPListResult;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -22,7 +20,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class MainController extends AbstractController {
 
@@ -53,21 +50,6 @@ public class MainController extends AbstractController {
     private File lastDirectory = null;
 
     private File currentLocalDirectory = new File("D:/");
-
-    private Timeline refreshTimeline;
-
-    // private void startAutoRefresh() {
-    // refreshTimeline = new Timeline(
-    // new KeyFrame(Duration.seconds(3), event -> {
-    // try {
-    // loadFiles();
-    // loadLocalFiles();
-    // } catch (Throwable e) {
-    // // TODO Auto-generated catch block
-    // e.printStackTrace();
-    // }
-    // }));
-    // }
 
     @FXML
     void initialize() throws IOException {
@@ -174,6 +156,18 @@ public class MainController extends AbstractController {
 
     @FXML
     void downloadAFile(ActionEvent event) throws IOException {
+        if (fileClicked == null || fileClicked.isBlank()) {
+            return;
+        }
+
+        if (!isFile(fileInformation)) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Cannot Download");
+            alert.setHeaderText("Please select a file to download");
+            alert.showAndWait();
+            return;
+        }
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose a file to download");
 
@@ -187,6 +181,12 @@ public class MainController extends AbstractController {
 
         // Show dialog
         File saveFile = fileChooser.showSaveDialog(stage);
+
+        if (saveFile == null) {
+            return;
+        }
+
+        lastDirectory = saveFile.getParentFile();
 
         ArrayList<String> currentDirectoryFromServer = ftp.pwd();
         String serverPath = currentDirectoryFromServer.get(0).split(" ")[1].replace("\"", "") + "/" + fileClicked;
