@@ -24,7 +24,6 @@ public class ConnectController extends AbstractController {
         try {
             int portNumber = Integer.parseInt(port.getText());
             ftp.connect(server.getText(), portNumber);
-            // ftp.connect(FTP_SERVER, PORT);
             ftp.initializeStreams();
             SceneLoader sceneLoader = new SceneLoader(ftp);
             printArrayString(ftp.readReplyWithSpecificCode(CONNECT_SUCCESSFUL));

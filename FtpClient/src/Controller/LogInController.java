@@ -21,20 +21,20 @@ public class LogInController extends AbstractController {
     private Label message;
 
     private String lastReply;
+
     @FXML
     void login(ActionEvent event) throws Throwable {
         ftp.loginUsername(userName.getText());
-        // ftp.loginUsername(USER_NAME);
         ArrayList<String> allReplys = ftp.readReplyFromServer();
         lastReply = allReplys.get(allReplys.size() - 1);
+        message.setText(lastReply);
         if (lastReply.startsWith(REQUIRE_PASSWORD)) {
             ftp.loginPassword(password.getText());
-            // ftp.loginPassword(PASSWORD);
             allReplys = ftp.readReplyFromServer();
             lastReply = allReplys.get(allReplys.size() - 1);
         }
         if (ftp.isNotLogin(lastReply)) {
-            message.setText("Wrong username or password");
+            message.setText(lastReply);
         } else {
             SceneLoader sceneLoader = new SceneLoader(ftp);
             sceneLoader.loadScene(event, "/FXMLFile/Main.fxml");

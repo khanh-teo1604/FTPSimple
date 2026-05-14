@@ -184,6 +184,8 @@ public class FTPClient {
 
         fileOutputStream.close();
         dataSocket.close();
+        ArrayList<String> replyAfterTransfer = readReplyFromServer();
+        allReplies.addAll(replyAfterTransfer);
 
         return allReplies;
 
@@ -200,6 +202,12 @@ public class FTPClient {
         sendCommand("STOR " + toServerFile);
         ArrayList<String> replyAfterStor = readReplyFromServer();
         allReplies.addAll(replyAfterStor);
+        String reply = replyAfterStor.get(replyAfterStor.size() - 1);
+
+        if (reply.startsWith(PERMISSION_DENIED)) {
+            dataSocket.close();
+            return allReplies;
+        }
 
         FileInputStream fileInputStream = new FileInputStream(fromLocalFile);
         byte[] bufferBytes = new byte[65535];
@@ -213,6 +221,9 @@ public class FTPClient {
         fileInputStream.close();
         dataOutputStream.close();
         dataSocket.close();
+
+        ArrayList<String> replyAfterTransfer = readReplyFromServer();
+        allReplies.addAll(replyAfterTransfer);
         return allReplies;
     }
 

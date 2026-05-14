@@ -112,7 +112,12 @@ public class MainController extends AbstractController {
         for (String fileInformation : result.getFiles()) {
             String fileName = extractFileName(fileInformation);
 
-            serverListView.getItems().add(fileName);
+            if (isDirectory(fileInformation)) {
+                serverListView.getItems().add("[DIR] " + fileName);
+            } else {
+                serverListView.getItems().add(fileName);
+            }
+
             serverFileInfoMap.put(fileName, fileInformation);
         }
     }
@@ -122,8 +127,18 @@ public class MainController extends AbstractController {
     void changeServerDirectory(MouseEvent event) throws Throwable {
         String selectedFile = serverListView.getSelectionModel().getSelectedItem();
 
+        if (selectedFile == null) {
+            return;
+        }
+
+        String fileName = selectedFile;
+
+        if (fileName.startsWith("[DIR] ")) {
+            fileName = fileName.replaceFirst("\\[DIR\\] ", "");
+        }
+
         if (event.getClickCount() == 2) {
-            printMessage(ftp.cd(selectedFile));
+            printMessage(ftp.cd(fileName));
 
             serverListView.getItems().clear();
             loadFiles();
@@ -131,8 +146,8 @@ public class MainController extends AbstractController {
         }
 
         if (event.getClickCount() == 1) {
-            fileClicked = selectedFile;
-            fileInformation = serverFileInfoMap.get(selectedFile);
+            fileClicked = fileName;
+            fileInformation = serverFileInfoMap.get(fileName);
             return;
         }
     }
@@ -169,7 +184,7 @@ public class MainController extends AbstractController {
         }
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose a file to download");
+        fileChooser.setTitle("Enter a name file");
 
         if (lastDirectory != null && lastDirectory.exists()) {
             fileChooser.setInitialDirectory(lastDirectory);
@@ -192,8 +207,6 @@ public class MainController extends AbstractController {
         String serverPath = currentDirectoryFromServer.get(0).split(" ")[1].replace("\"", "") + "/" + fileClicked;
 
         printMessage(ftp.get(serverPath, saveFile.getAbsolutePath()));
-
-        printMessage(ftp.readReplyFromServer());
     }
 
     @FXML
@@ -221,15 +234,13 @@ public class MainController extends AbstractController {
         String serverPath = currentDirectoryFromServer.get(0).split(" ")[1].replace("\"", "") + "/" + fileName;
 
         printMessage(ftp.put(selectedFile.getAbsolutePath(), serverPath));
-
-        printMessage(ftp.readReplyFromServer());
-
         serverListView.getItems().clear();
         loadFiles();
     }
 
     @FXML
     void deleteAFile(ActionEvent event) throws Throwable {
+        System.out.println(fileInformation);
         if (isFile(fileInformation)) {
             printMessage(ftp.delete(fileClicked));
             serverListView.getItems().clear();
