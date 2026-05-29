@@ -65,6 +65,10 @@ public class MainController extends AbstractController {
                 : "fx:id=\"replyFromServerView\" was not injected: check your FXML file 'Main.fxml'.";
     }
 
+    /**
+     * Load all the file name from the local computer and add it to the list view.
+     */
+
     private void loadLocalFiles() {
         File[] files = currentLocalDirectory.listFiles();
 
@@ -84,33 +88,13 @@ public class MainController extends AbstractController {
         }
     }
 
-    private String extractFileName(String fileInformation) {
-        String[] parts = fileInformation.trim().split("\\s+", 9);
-        String filename = parts[8];
+    /**
+     * Load all the file name from server to the server list view.
+     * 
+     * @throws Throwable
+     */
 
-        return filename;
-    }
-
-    @Override
-    public void onSceneLoaded(Stage stage) {
-        // TODO Auto-generated method stub
-        super.onSceneLoaded(stage);
-        try {
-            loadFiles();
-            loadLocalFiles();
-            // startAutoRefresh();
-            // ArrayList<String> message = ftp.readReplyFromServer();
-            // printMessage(message);
-        } catch (Throwable e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // refreshTimeline.setCycleCount(Timeline.INDEFINITE);
-        // refreshTimeline.play();
-    }
-
-    public void loadFiles() throws Throwable {
+    private void loadServerFiles() throws Throwable {
         FTPListResult result = ftp.ls();
         serverPath.setText(extractCurrentDirectory(ftp.pwd()));
 
@@ -132,9 +116,48 @@ public class MainController extends AbstractController {
         }
     }
 
-    // We need to think about hashmap
+    /**
+     * After the client receive the information (after LIST command) this method
+     * will extract the file name from the result.
+     * 
+     * @param fileInformation
+     * @return
+     */
+
+    private String extractFileName(String fileInformation) {
+        String[] parts = fileInformation.trim().split("\\s+", 9);
+        String filename = parts[8];
+
+        return filename;
+    }
+
+    /**
+     * Load the main scene.
+     */
+    @Override
+    public void onSceneLoaded(Stage stage) {
+        // TODO Auto-generated method stub
+        super.onSceneLoaded(stage);
+        try {
+            loadServerFiles();
+            loadLocalFiles();
+        } catch (Throwable e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Change the server directory by clicking the file name 2 times and list all
+     * the files inside the chosen directory.
+     * If the user just click the file name 1 times, the app will assign this name
+     * to the variable that will use for choosing file for downloading.
+     * 
+     * @param event
+     * @throws Throwable
+     */
     @FXML
-    void changeServerDirectory(MouseEvent event) throws Throwable {
+    private void changeServerDirectory(MouseEvent event) throws Throwable {
         String selectedFile = serverListView.getSelectionModel().getSelectedItem();
 
         if (selectedFile == null) {
@@ -151,7 +174,7 @@ public class MainController extends AbstractController {
             printMessage(ftp.cd(fileName));
 
             serverListView.getItems().clear();
-            loadFiles();
+            loadServerFiles();
             return;
         }
 
@@ -162,8 +185,13 @@ public class MainController extends AbstractController {
         }
     }
 
+    /**
+     * List all the file from double-clicked directory in local file side.
+     * 
+     * @param event
+     */
     @FXML
-    void changeLocalDirectory(MouseEvent event) {
+    private void changeLocalDirectory(MouseEvent event) {
         if (event.getClickCount() != 2) {
             return;
         }
@@ -179,13 +207,30 @@ public class MainController extends AbstractController {
         loadLocalFiles();
     }
 
+    /**
+     * After client send to user PWD command, the server will send back the message
+     * "[Current path] is current directory".
+     * So this function will extract the file name from this message.
+     * 
+     * @param path
+     * @return
+     * @throws IOException
+     */
+
     private String extractCurrentDirectory(ArrayList<String> path) throws IOException {
         ArrayList<String> currentDirectoryFromServer = ftp.pwd();
         return currentDirectoryFromServer.get(0).split(" ")[1].replace("\"", "");
     }
 
+    /**
+     * Downloading a file button implementation
+     * 
+     * @param event
+     * @throws Throwable
+     */
+
     @FXML
-    void downloadAFile(ActionEvent event) throws Throwable {
+    private void downloadAFile(ActionEvent event) throws Throwable {
         if (fileClicked == null || fileClicked.isBlank()) {
             return;
         }
@@ -206,10 +251,7 @@ public class MainController extends AbstractController {
         }
 
         fileChooser.setInitialFileName(fileClicked);
-        // Get current stage
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-        // Show dialog
         File saveFile = fileChooser.showSaveDialog(stage);
 
         if (saveFile == null) {
@@ -222,12 +264,19 @@ public class MainController extends AbstractController {
         String serverPath = extractCurrentDirectory(currentDirectoryFromServer) + "/" + fileClicked;
 
         printMessage(ftp.get(serverPath, saveFile.getAbsolutePath()));
-        loadFiles();
+        loadServerFiles();
         loadLocalFiles();
     }
 
+    /**
+     * Uploading a file button implementation
+     * 
+     * @param event
+     * @throws Throwable
+     */
+
     @FXML
-    void uploadAFile(ActionEvent event) throws Throwable {
+    private void uploadAFile(ActionEvent event) throws Throwable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select a file");
 
@@ -252,16 +301,22 @@ public class MainController extends AbstractController {
 
         printMessage(ftp.put(selectedFile.getAbsolutePath(), serverPath));
         serverListView.getItems().clear();
-        loadFiles();
+        loadServerFiles();
         loadLocalFiles();
     }
 
+    /**
+     * Deleting a file button implementation
+     * 
+     * @param event
+     * @throws Throwable
+     */
     @FXML
-    void deleteAFile(ActionEvent event) throws Throwable {
+    private void deleteAFile(ActionEvent event) throws Throwable {
         if (isFile(fileInformation)) {
             printMessage(ftp.delete(fileClicked));
             serverListView.getItems().clear();
-            loadFiles();
+            loadServerFiles();
             loadLocalFiles();
             return;
         }
@@ -280,18 +335,32 @@ public class MainController extends AbstractController {
             }
 
             serverListView.getItems().clear();
-            loadFiles();
+            loadServerFiles();
             loadLocalFiles();
             return;
         }
     }
 
+    /**
+     * Pwd button implementation
+     * 
+     * @param event
+     * @throws IOException
+     */
+
     @FXML
-    void showPWD(ActionEvent event) throws IOException {
+    private void showPWD(ActionEvent event) throws IOException {
         printMessage(ftp.pwd());
     }
 
-    public void printMessage(ArrayList<String> message) throws IOException {
+    /**
+     * Print the message reply after sending command to the server and put the
+     * message to the server reply view.
+     * 
+     * @param message
+     * @throws IOException
+     */
+    private void printMessage(ArrayList<String> message) throws IOException {
         replyFromServerView.getItems().addAll(message);
         if (!message.isEmpty()) {
             int lastindex = replyFromServerView.getItems().size() - 1;
@@ -300,8 +369,14 @@ public class MainController extends AbstractController {
         }
     }
 
+    /**
+     * Quit button implementation
+     * 
+     * @param event
+     * @throws IOException
+     */
     @FXML
-    void quit(ActionEvent event) throws IOException {
+    private void quit(ActionEvent event) throws IOException {
         ftp.disconnect();
         // Get current window
         Stage stage = (Stage) ((Node) event.getSource())
@@ -311,15 +386,24 @@ public class MainController extends AbstractController {
         stage.close();
     }
 
+    /**
+     * Go back to the parent file one step in Server side button implementation
+     * 
+     * @param event
+     * @throws Throwable
+     */
     @FXML
-    void goBackServer(ActionEvent event) throws Throwable {
+    private void goBackServer(ActionEvent event) throws Throwable {
         printMessage(ftp.cd(".."));
         serverListView.getItems().clear();
-        loadFiles();
+        loadServerFiles();
         loadLocalFiles();
 
     }
 
+    /**
+     * Go back to the parent file one step in Client side button implementation
+     */
     @FXML
     private void goBackLocal() {
         File parent = currentLocalDirectory.getParentFile();
@@ -330,6 +414,11 @@ public class MainController extends AbstractController {
         }
     }
 
+    /**
+     * Sending command to server implementation
+     * 
+     * @throws Throwable
+     */
     @FXML
     private void runCommand() throws Throwable {
         String userCommand = command.getText().trim();
@@ -338,17 +427,31 @@ public class MainController extends AbstractController {
         printMessage(ftp.readReplyFromServer());
 
         serverListView.getItems().clear();
-        loadFiles();
+        loadServerFiles();
         loadLocalFiles();
         command.clear();
 
     }
 
-    public boolean isDirectory(String listLine) {
+    /**
+     * Base on the file information, the function will check that this file
+     * information is directory or not
+     * 
+     * @param listLine
+     * @return
+     */
+    private boolean isDirectory(String listLine) {
         return listLine != null && listLine.startsWith("d");
     }
 
-    public boolean isFile(String listLine) {
+    /**
+     * Base on the file information, the function will check that this file
+     * information is directory or not
+     * 
+     * @param listLine
+     * @return
+     */
+    private boolean isFile(String listLine) {
         return listLine != null && listLine.startsWith("-");
     }
 }

@@ -23,7 +23,6 @@ public class App extends Application {
         ConnectController connectController = loader.getController();
         connectController.setFTPClient(ftpClient);
 
-        // controller.setMainWindow(primaryStage);
         primaryStage.setScene(scene);
         primaryStage.show();
 

@@ -15,6 +15,13 @@ public class SceneLoader {
         this.ftp = ftp;
     }
 
+    /**
+     * After an event, this will help javafx to load the sence stored as path in this project.
+     * @param event
+     * @param resourceFolder
+     * @throws Throwable
+     */
+
     public void loadScene(ActionEvent event, String resourceFolder) throws Throwable {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(resourceFolder));
         Parent root = loader.load();

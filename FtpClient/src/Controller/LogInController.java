@@ -22,6 +22,13 @@ public class LogInController extends AbstractController {
 
     private String lastReply;
 
+    /**
+     * Login Button implementation
+     * 
+     * @param event
+     * @throws Throwable
+     */
+
     @FXML
     void login(ActionEvent event) throws Throwable {
         ftp.loginUsername(userName.getText());

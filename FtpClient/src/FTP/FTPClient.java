@@ -27,6 +27,7 @@ public class FTPClient {
     private int portPassiveMode;
 
     /**
+     * Establish connection.
      * 
      * @param server
      * @param port
@@ -38,6 +39,7 @@ public class FTPClient {
     }
 
     /**
+     * Initialization Reader and writer for FTP connection
      * 
      * @throws IOException
      */
@@ -45,6 +47,15 @@ public class FTPClient {
         reader = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
         writer = new PrintWriter(connectionSocket.getOutputStream(), true);
     }
+
+    /**
+     * After sending command to server, the server will send back the response
+     * message to the client. This function only return the specific code message.
+     * 
+     * @param code
+     * @return
+     * @throws IOException
+     */
 
     public ArrayList<String> readReplyWithSpecificCode(String code) throws IOException {
         ArrayList<String> allLines = new ArrayList<>();
@@ -61,21 +72,46 @@ public class FTPClient {
     }
 
     // Consider in case when we need only username not password
+
+    /**
+     * Send user name command to server
+     * 
+     * @param username
+     * @throws IOException
+     */
     public void loginUsername(String username) throws IOException {
         sendCommand("USER " + username);
     }
 
+    /**
+     * Send password command to server
+     * 
+     * @param password
+     * @throws IOException
+     */
     public void loginPassword(String password) throws IOException {
         sendCommand("PASS " + password);
 
     }
 
+    /**
+     * Check Login sucessful or not
+     * 
+     * @param reply
+     * @return
+     */
     public boolean isNotLogin(String reply) {
         if (reply.startsWith(LOGIN_UNSUCCESSFUL))
             return true;
         return false;
     }
 
+    /**
+     * Send command to server
+     * 
+     * @param command
+     * @throws IOException
+     */
     public void sendCommand(String command) throws IOException {
         if (writer.checkError()) {
             System.out.println("An error occur while writing");
@@ -83,10 +119,22 @@ public class FTPClient {
         writer.println(command);
     }
 
+    /**
+     * Send quit command
+     * 
+     * @throws IOException
+     */
     public void disconnect() throws IOException {
         sendCommand("QUIT");
         connectionSocket.close();
     }
+
+    /**
+     * Read reply response after sending command to server
+     * 
+     * @return
+     * @throws IOException
+     */
 
     public ArrayList<String> readReplyFromServer() throws IOException {
         ArrayList<String> allLines = new ArrayList<>();
@@ -101,15 +149,27 @@ public class FTPClient {
         return allLines;
     }
 
+    /**
+     * Send pwd comand
+     * 
+     * @return
+     * @throws IOException
+     */
+
     public ArrayList<String> pwd() throws IOException {
         sendCommand("PWD");
         return readReplyFromServer();
     }
 
-    // It will show as format(h1,h2,h3,h4,p1,p2)
-    // Which means IP.address = h1.h2.h3.h4
-    // Port p1 * 2^8 + p2
-    // For example 227 Entering Passive Mode (209,51,188,20,93,52).
+    /**
+     * Send Passive command. The return message contains a list with
+     * format(h1,h2,h3,h4,p1,p2). Which means
+     * IP.address = h1.h2.h3.h4. Port = p1 * 2^8 + p2.
+     * For example 227 Entering Passive Mode (209,51,188,20,93,52).
+     * 
+     * @return
+     * @throws IOException
+     */
     public ArrayList<String> setPassiveMode() throws IOException {
         sendCommand("PASV");
         ArrayList<String> passiveReplys = readReplyWithSpecificCode(PASSIVE_MODE);
@@ -122,6 +182,12 @@ public class FTPClient {
         portPassiveMode = Integer.parseInt(allNumbers[4]) * 256 + Integer.parseInt(allNumbers[5]);
         return passiveReplys;
     }
+
+    /**
+     * List comand
+     * @return
+     * @throws IOException
+     */
 
     public FTPListResult ls() throws IOException {
         ArrayList<String> allReplies = new ArrayList<>();
@@ -151,11 +217,24 @@ public class FTPClient {
 
     }
 
+    /**
+     * Change directory command
+     * @param directory
+     * @return
+     * @throws IOException
+     */
     public ArrayList<String> cd(String directory) throws IOException {
         sendCommand("CWD " + directory);
         return readReplyFromServer();
     }
 
+    /**
+     * Download command
+     * @param fromServerFile
+     * @param toLocalFile
+     * @return
+     * @throws IOException
+     */
     public ArrayList<String> get(String fromServerFile, String toLocalFile) throws IOException {
         ArrayList<String> allReplies = new ArrayList<>();
         allReplies.addAll(setPassiveMode());
@@ -191,7 +270,13 @@ public class FTPClient {
 
     }
 
-    // Access denied (Actually not our problem)
+    /**
+     * Upload command
+     * @param fromLocalFile
+     * @param toServerFile
+     * @return
+     * @throws IOException
+     */
     public ArrayList<String> put(String fromLocalFile, String toServerFile) throws IOException {
         ArrayList<String> allReplies = new ArrayList<>();
         allReplies.addAll(setPassiveMode());
@@ -227,16 +312,34 @@ public class FTPClient {
         return allReplies;
     }
 
+    /**
+     * Delete command
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
     public ArrayList<String> delete(String fileName) throws IOException {
         sendCommand("DELE " + fileName);
         return readReplyFromServer();
     }
 
+    /**
+     * Make directory command
+     * @param directory
+     * @return
+     * @throws IOException
+     */
     public ArrayList<String> mkdir(String directory) throws IOException {
         sendCommand("MKD " + directory);
         return readReplyFromServer();
     }
 
+    /**
+     * Remove directory command
+     * @param directory
+     * @return
+     * @throws IOException
+     */
     public ArrayList<String> rmdir(String directory) throws IOException {
         sendCommand("RMD " + directory);
         return readReplyFromServer();

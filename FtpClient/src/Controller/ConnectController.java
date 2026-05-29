@@ -19,6 +19,11 @@ public class ConnectController extends AbstractController {
     @FXML
     private TextField server;
 
+    /**
+     * Connect button implementation
+     * @param event
+     * @throws Throwable
+     */
     @FXML
     void connect(ActionEvent event) throws Throwable {
         try {
