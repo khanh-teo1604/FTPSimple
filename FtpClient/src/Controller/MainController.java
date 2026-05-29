@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -41,6 +42,12 @@ public class MainController extends AbstractController {
     private TextField command;
 
     @FXML
+    private Label localPath;
+
+    @FXML
+    private Label serverPath;
+
+    @FXML
     private ListView<String> replyFromServerView;
 
     private String fileClicked = null;
@@ -60,6 +67,8 @@ public class MainController extends AbstractController {
 
     private void loadLocalFiles() {
         File[] files = currentLocalDirectory.listFiles();
+
+        localPath.setText(currentLocalDirectory.getAbsolutePath());
         if (files == null) {
             return;
         }
@@ -103,6 +112,7 @@ public class MainController extends AbstractController {
 
     public void loadFiles() throws Throwable {
         FTPListResult result = ftp.ls();
+        serverPath.setText(extractCurrentDirectory(ftp.pwd()));
 
         printMessage(result.getReplies());
 
@@ -169,8 +179,13 @@ public class MainController extends AbstractController {
         loadLocalFiles();
     }
 
+    private String extractCurrentDirectory(ArrayList<String> path) throws IOException {
+        ArrayList<String> currentDirectoryFromServer = ftp.pwd();
+        return currentDirectoryFromServer.get(0).split(" ")[1].replace("\"", "");
+    }
+
     @FXML
-    void downloadAFile(ActionEvent event) throws IOException {
+    void downloadAFile(ActionEvent event) throws Throwable {
         if (fileClicked == null || fileClicked.isBlank()) {
             return;
         }
@@ -204,9 +219,11 @@ public class MainController extends AbstractController {
         lastDirectory = saveFile.getParentFile();
 
         ArrayList<String> currentDirectoryFromServer = ftp.pwd();
-        String serverPath = currentDirectoryFromServer.get(0).split(" ")[1].replace("\"", "") + "/" + fileClicked;
+        String serverPath = extractCurrentDirectory(currentDirectoryFromServer) + "/" + fileClicked;
 
         printMessage(ftp.get(serverPath, saveFile.getAbsolutePath()));
+        loadFiles();
+        loadLocalFiles();
     }
 
     @FXML
@@ -231,20 +248,21 @@ public class MainController extends AbstractController {
         String fileName = selectedFile.getName();
 
         ArrayList<String> currentDirectoryFromServer = ftp.pwd();
-        String serverPath = currentDirectoryFromServer.get(0).split(" ")[1].replace("\"", "") + "/" + fileName;
+        String serverPath = extractCurrentDirectory(currentDirectoryFromServer) + "/" + fileName;
 
         printMessage(ftp.put(selectedFile.getAbsolutePath(), serverPath));
         serverListView.getItems().clear();
         loadFiles();
+        loadLocalFiles();
     }
 
     @FXML
     void deleteAFile(ActionEvent event) throws Throwable {
-        System.out.println(fileInformation);
         if (isFile(fileInformation)) {
             printMessage(ftp.delete(fileClicked));
             serverListView.getItems().clear();
             loadFiles();
+            loadLocalFiles();
             return;
         }
         if (isDirectory(fileInformation)) {
@@ -263,6 +281,7 @@ public class MainController extends AbstractController {
 
             serverListView.getItems().clear();
             loadFiles();
+            loadLocalFiles();
             return;
         }
     }
@@ -297,6 +316,7 @@ public class MainController extends AbstractController {
         printMessage(ftp.cd(".."));
         serverListView.getItems().clear();
         loadFiles();
+        loadLocalFiles();
 
     }
 
@@ -319,6 +339,7 @@ public class MainController extends AbstractController {
 
         serverListView.getItems().clear();
         loadFiles();
+        loadLocalFiles();
         command.clear();
 
     }

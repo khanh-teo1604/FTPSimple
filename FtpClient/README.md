@@ -4,26 +4,6 @@ Bachelor Project: Build an FTP Client in Java.
 
 This project implements a simple FTP client with a simple GUI friendly for users. It can connect to an FTP server, log in, browse local files, browse remote server files, upload files, download files, delete files, change directories, and show replies from the FTP server.
 
-The project is designed for learning how the FTP protocol works, especially the difference between the control connection and the data connection used by commands such as `LIST`, `RETR`, and `STOR`.
-
-## Project Goal
-
-Implement an FTP client using Java that can interact with a public FTP server, for example `ftp.gnu.org`, or a local FTP server.
-
-The client must support:
-
-- Connect to FTP server on the default port `21`
-- Anonymous login and custom username/password login
-- `pwd` using the FTP `PWD` command
-- `cd` using the FTP `CWD` command
-- `ls` using `PASV` + `LIST`
-- `get` using `PASV` + `RETR` in binary mode
-- `put` using `PASV` + `STOR` in binary mode
-- `delete` using the FTP `DELE` command
-- `mkdir` using the FTP `MKD` command
-- `rmdir` using the FTP `RMD` command
-- `quit` using the FTP `QUIT` command
-
 ## Library Rules
 
 For the FTP protocol implementation, only these Java packages are allowed:
@@ -32,45 +12,6 @@ For the FTP protocol implementation, only these Java packages are allowed:
 java.io.*
 java.net.*
 java.util.*
-```
-
-## Requirements
-
-Install these before running the project:
-
-- Java JDK 17 or newer
-- JavaFX SDK
-- An IDE such as VS Code, IntelliJ IDEA, or Eclipse
-
-This project uses JavaFX FXML files, so JavaFX must be configured correctly in the classpath or module path.
-
-The `lib` folder is available for extra `.jar` files if needed, but the FTP implementation itself should not use third-party FTP libraries.
-
-## Project Structure
-
-```text
-FtpClient/
-+-- src/
-|   +-- App.java
-|   +-- Controller/
-|   |   +-- MainController.java
-|   |   +-- ConnectController.java
-|   |   +-- ...
-|   +-- FTP/
-|   |   +-- FTPClient.java
-|   |   +-- Constant.java
-|   +-- FXMLFile/
-|       +-- Main.fxml
-|       +-- Connection.fxml
-|       +-- ...
-+-- bin/
-|   +-- compiled .class files
-+-- lib/
-|   +-- optional .jar libraries
-+-- .vscode/
-|   +-- settings.json
-|   +-- launch.json
-+-- README.md
 ```
 
 Important folders:
@@ -118,20 +59,6 @@ Then open `.vscode/launch.json` and update the JavaFX module path:
 
 Use your own JavaFX path instead of `C:\\javafx-sdk-26\\lib`.
 
-## Setup in IntelliJ IDEA
-
-1. Open the project folder in IntelliJ IDEA.
-2. Make sure the project SDK is set to JDK 17 or newer.
-3. Add the JavaFX SDK `lib` folder as a library.
-4. Open the run configuration for `App.java`.
-5. Add VM options:
-
-```text
---module-path "C:\javafx-sdk-26\lib" --add-modules javafx.controls,javafx.fxml
-```
-
-Replace the path with your own JavaFX SDK path.
-
 ## How to Run
 
 The main class is:
@@ -141,13 +68,6 @@ src/App.java
 ```
 
 In VS Code, select the `App` launch configuration and press Run.
-
-You can also compile and run from the terminal. Example on Windows PowerShell:
-
-```powershell
-javac --module-path "C:\javafx-sdk-26\lib" --add-modules javafx.controls,javafx.fxml -d bin (Get-ChildItem -Path src -Recurse -Filter *.java).FullName
-java --module-path "C:\javafx-sdk-26\lib" --add-modules javafx.controls,javafx.fxml -cp "bin;src" App
-```
 
 Notes:
 
@@ -178,8 +98,6 @@ Main buttons:
 Command text field examples:
 
 ```text
-pwd
-ls
 cwd folderName
 pwd
 pasv
@@ -192,10 +110,10 @@ quit
 Commands with spaces in the folder or file name should keep the command separate from the rest of the text. For example:
 
 ```text
-cd my folder
+cwd my folder
 ```
 
-The command is `cd`, and the folder name is `my folder`.
+The command is `cwd`, and the folder name is `my folder`.
 
 ## Common Problems
 
@@ -233,26 +151,6 @@ Check:
 - Your network allows FTP connections
 - The FTP server is running
 
-### Passive mode or listing problem
-
-The `ls`, `get`, and `put` commands need passive mode. The client sends `PASV`, reads the server IP and port, opens a data socket, then sends `LIST`, `RETR`, or `STOR`.
-
-If listing does not work, check that:
-
-- The server supports passive mode
-- Your firewall allows the data connection
-- The passive mode reply is parsed correctly
-
 ### Permission denied when deleting folders
 
 Some FTP servers do not allow removing non-empty folders. Delete the files inside the folder first, then try `rmdir` again.
-
-## Flow of FTPClient
-
-```text
-MainController calls FTPClient
-FTPClient sends FTP command
-FTPClient reads server replies
-FTPClient returns replies/data
-MainController displays replies/data in the GUI
-```

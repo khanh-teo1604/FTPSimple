@@ -6,6 +6,7 @@ public final class Constant {
     }
 
     public static String USER_NAME = "test1";
+    public static String INITIAL_PATH_LOCAL_CLIENT = "D:/";
     public static String PASSWORD = "khanhteo1604";
     public static String FTP_SERVER = "localhost";
     public static int PORT = 21;

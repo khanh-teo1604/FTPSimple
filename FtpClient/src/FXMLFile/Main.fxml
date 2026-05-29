@@ -22,9 +22,14 @@
    <left>
       <VBox>
          <children>
-            <Label alignment="CENTER" prefHeight="46.0" prefWidth="304.0" text="Local File" textAlignment="RIGHT">
+            <Label alignment="CENTER" prefHeight="27.0" prefWidth="327.0" text="Local File" textAlignment="RIGHT">
                <font>
-                  <Font name="Aptos Narrow" size="31.0" />
+                  <Font name="Franklin Gothic Demi Cond" size="22.0" />
+               </font>
+            </Label>
+            <Label fx:id="localPath" alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="327.0" VBox.vgrow="NEVER">
+               <font>
+                  <Font name="Franklin Gothic Medium Cond" size="13.0" />
                </font>
             </Label>
             <ListView fx:id="clientListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#changeLocalDirectory" prefHeight="319.0" prefWidth="328.0" VBox.vgrow="ALWAYS" />
@@ -80,12 +85,17 @@
    <right>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" prefHeight="42.0" prefWidth="342.0" text="Server File" textAlignment="RIGHT">
+            <Label alignment="TOP_CENTER" prefHeight="26.0" prefWidth="342.0" text="Server File" textAlignment="RIGHT">
                <font>
-                  <Font name="Aptos Narrow" size="31.0" />
+                  <Font name="Franklin Gothic Demi Cond" size="22.0" />
                </font>
             </Label>
-            <ListView fx:id="serverListView" onMouseClicked="#changeServerDirectory" prefHeight="318.0" prefWidth="221.0" VBox.vgrow="ALWAYS" />
+            <Label fx:id="serverPath" alignment="CENTER_RIGHT" prefHeight="27.0" prefWidth="346.0">
+               <font>
+                  <Font name="Franklin Gothic Medium Cond" size="12.0" />
+               </font>
+            </Label>
+            <ListView fx:id="serverListView" onMouseClicked="#changeServerDirectory" prefHeight="326.0" prefWidth="346.0" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </right>
