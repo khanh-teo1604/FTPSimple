@@ -154,3 +154,11 @@ Check:
 ### Permission denied when deleting folders
 
 Some FTP servers do not allow removing non-empty folders. Delete the files inside the folder first, then try `rmdir` again.
+
+### Permission denied when uploading file
+
+In `/` Directory, it is not permitted that user can upload any file to this. Double click this folder first.
+
+## Integrity Declaration
+
+I confirm that this submission is my own work. I did not copy code from AI tools, classmates, or online repositories.
